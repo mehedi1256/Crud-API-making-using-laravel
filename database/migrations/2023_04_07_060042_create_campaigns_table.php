@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('max_limit');
             $table->string('status');
             $table->string('created_by');
+            $table->string('instock');
+            $table->string('order_qty');
             $table->timestamps();
         });
     }

@@ -34,6 +34,7 @@ Route::group(['middleware' => 'api'], function($routes){
     Route::post('/updatecampaign/{user}',[UserController::class,'updateCampaign']);
     Route::post('/updateCampaignStatus/{user}',[UserController::class,'updateCampaignStatus']);
     Route::delete('/deletecampaign/{user}',[UserController::class,'deleteCampaign']);
+    Route::get('/campaignDetails/{user}',[UserController::class,'campaignDetails']);
 });
 
 

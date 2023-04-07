@@ -8,6 +8,7 @@ use App\Models\Campaign;
 use Auth;
 use Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -107,6 +108,8 @@ class UserController extends Controller
         $data->max_limit = $request->max_limit;
         $data->status = $request->status;
         $data->created_by = $request->created_by;
+        $data->instock = $request->instock;
+        $data->order_qty = $request->order_qty;
 
         $data->save();
 
@@ -130,6 +133,8 @@ class UserController extends Controller
             Campaign::all('id', 'title', 'description', 'budget_amount')
         ]);
     }
+
+    
 
     //for update campaign
 
@@ -180,6 +185,20 @@ class UserController extends Controller
     public function show(User $id)
     {
         return response()->json(['id'=>$id]);
+    }
+
+    //show campaign details for join particular user
+    public function campaignDetails($user)
+    {
+        // return response()->json(['user'=>$user]);
+        // Table::select('title','description','budget_amount','instock','order_qty','created_by')->where('id', $user)->get();
+
+        $data = DB::table('campaigns')
+            ->select('title','description','budget_amount','instock','order_qty','created_by')
+            ->where('id', $user)
+            ->get();
+
+            return response()->json($data);
     }
 
     //for update particular data
