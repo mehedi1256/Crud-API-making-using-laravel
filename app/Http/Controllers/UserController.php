@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Campaign;
 use Auth;
 use Validator;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +17,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(),[
             'name' =>'required|string|min:2|max:100',
             'email' =>'required|string|email|max:100|unique:users',
+            'phone' =>'required|string|max:11|unique:users',
             'password' =>'required|string|min:6|confirmed',
         ]);
 
@@ -26,6 +28,8 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
+            'password' => Hash::make($request->password),
             'password' => Hash::make($request->password)
         ]);
 
@@ -40,7 +44,7 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            'email' =>'required|string|email',
+            'phone' =>'required|string',
             'password' =>'required|string|min:6',
         ]);
 
@@ -94,21 +98,83 @@ class UserController extends Controller
 
     //for store data
 
-    /* public function store(Request $request)
+    public function store(Request $request)
     {
-        $user = new User;
-        $user->name = $request->name;
-        $user->email = $request->email;
+        $data = new Campaign;
+        $data->title = $request->title;
+        $data->description = $request->description;
+        $data->budget_amount = $request->budget_amount;
+        $data->max_limit = $request->max_limit;
+        $data->status = $request->status;
+        $data->created_by = $request->created_by;
+
+        $data->save();
+
+        return response()->json([
+            'message' => 'Campaign Created Successfully',
+            'status' => 'Successful',
+            'data' => $data
+        ]);
+
+
+        
+    }
+
+    //show campaign data
+
+    public function showCampaignData()
+    {
+
+        return response()->json([
+            // 'campaigns' => Campaign::get()
+            Campaign::all('id', 'title', 'description', 'budget_amount')
+        ]);
+    }
+
+    //for update campaign
+
+    public function updateCampaign(Request $request, Campaign $user)
+    {
+        $user->title = $request->title;
+        $user->description = $request->description;
+        $user->budget_amount = $request->budget_amount;
+        $user->max_limit = $request->max_limit;
 
         $user->save();
 
         return response()->json([
-            'message' => 'Created Successfully',
+            'message' => 'Campaign Updated Successfully',
             'status' => 'Successful',
-            'date' => $user
+            'data' => $user
         ]);
-    } */
+    }
 
+    //update campaign status
+    public function updateCampaignStatus(Request $request, Campaign $user)
+    {
+        $user->status = $request->status;
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Campaign Status  Updated Successfully',
+            'status' => 'Successful',
+            'data' => $user
+        ]);
+    }
+
+
+    //delete campaign data
+    public function deleteCampaign(Request $request, Campaign $user)
+    {
+        $user->delete();
+
+        return response()->json([
+           'message' => 'Campaign Deleted Successfully',
+           'status' => 'Successful',
+            'data' => $user
+        ]);
+    }
 
     //for show particular data
     public function show(User $id)
